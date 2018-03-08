@@ -40,4 +40,11 @@ public class WorkingHoursServiceImpl implements WorkingHoursService {
     public List<Employees> findAllEmployeeForDate(Date date) {
         return repoWorkingHours.findAllEmployeeForDate(date);
     }
+
+    @Override
+    public Integer getAvailableVacationDay(Long id) {
+        return repoWorkingHours.getAvailableVacationDay(id);
+    }
+
+
 }

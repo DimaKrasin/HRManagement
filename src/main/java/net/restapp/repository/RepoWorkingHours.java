@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -13,4 +14,7 @@ import java.util.List;
 public interface RepoWorkingHours extends JpaRepository<WorkingHours, Long> {
     @Query("select wh.employees FROM WorkingHours wh where wh.startTime = ?1")
     List<Employees> findAllEmployeeForDate(Date date);
+
+    @Query("select em FROM Employees em where em.id = ?1")
+    Integer getAvailableVacationDay(Long id);
 }

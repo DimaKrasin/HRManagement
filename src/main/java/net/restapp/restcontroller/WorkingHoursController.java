@@ -15,6 +15,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +58,25 @@ public class WorkingHoursController {
         }
 
         return new ResponseEntity<>(availableEmployees, HttpStatus.OK);
+    }
+
+    //Принимает id работника
+    //Возвращяет доступное количество дней отдыха НА ДАННЫЙ МОМЕНТ
+    @RequestMapping(value = "/getAvailableVacationDay/{workingHoursId}", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Object> getAvailableVacationDay(
+            @PathVariable("workingHoursId") Long employeesId,
+            HttpServletRequest request){
+
+        if (employeesId == null){
+            return myResponseRequest.bedRequest(
+                    request,
+                    "working Hours Id must be not null");
+        }
+
+        Integer availableVacationDay = workingHoursService.getAvailableVacationDay(employeesId);
+
+        return new ResponseEntity<>(availableVacationDay,HttpStatus.OK);
     }
 
 
@@ -153,11 +173,39 @@ public class WorkingHoursController {
                                                  HttpServletRequest request){
         HttpHeaders httpHeaders = new HttpHeaders();
 
-        if (workingHours == null){
+        if(workingHours.getStartTime()==null){
             return myResponseRequest.bedRequest(
                     request,
-                    "Working Hours Id be not null");
+                    "Start time at working hours must not to be null");
         }
+
+        if(workingHours.getEmployees() == null){
+            return myResponseRequest.bedRequest(
+                    request,
+                    "Employees at working hours must not to be null");
+        }
+        if(workingHours.getEvent() == null){
+            return myResponseRequest.bedRequest(
+                    request,
+                    "Event at working hours must not to be null");
+        }
+        if(workingHours.getHours()==null){
+            return myResponseRequest.bedRequest(
+                    request,
+                    "Hours at working hours must not to be null");
+        }
+        if(workingHours.getStatus()==null){
+            return myResponseRequest.bedRequest(
+                    request,
+                    "Status at working hours must not to be null");
+        }
+
+        BigDecimal salaryPerHour = workingHours.getEmployees().getPosition().getSalary();
+        BigDecimal statusCoef = workingHours.getStatus().getSalary_coef();
+        BigDecimal hours = workingHours.getHours();
+
+        BigDecimal salary = hours.multiply(salaryPerHour.multiply(statusCoef));
+        workingHours.setSalary(salary);
         workingHoursService.save(workingHours);
 
         httpHeaders.setLocation(builder.path("/workingHours/getAll").buildAndExpand().toUri());

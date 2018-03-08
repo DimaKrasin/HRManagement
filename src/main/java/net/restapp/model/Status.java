@@ -34,5 +34,35 @@ public class Status {
     @OneToMany(mappedBy = "status")
     List<WorkingHours> workingHoursList;
 
+    public long getId() {
+        return id;
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public BigDecimal getSalary_coef() {
+        return salary_coef;
+    }
+
+    public void setSalary_coef(BigDecimal salary_coef) {
+        this.salary_coef = salary_coef;
+    }
+
+    public List<WorkingHours> getWorkingHoursList() {
+        return workingHoursList;
+    }
+
+    public void setWorkingHoursList(List<WorkingHours> workingHoursList) {
+        this.workingHoursList = workingHoursList;
+    }
 }
